@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tmg-ksa-e-service-sms-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tmg-ksa-e-service-sms-app
+  template:
+    metadata:
+      labels:
+        app: tmg-ksa-e-service-sms-app
+    spec:
+      containers:
+        - name: tmg-ksa-e-service-sms-app
+          image: de.icr.io/cic-tmg-ecommerce/sms-managment-backend-dev-app:638-k8-deployment-77980661-20210727153437
+          args:
+            - --spring.application.json=$(BINDING)
+          env:
+            - name: BINDING
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-properties
+                  key: application-properties
+
+          ports:
+            - containerPort: 8025
+          resources:
+            requests:
+              memory: 350Mi
+              cpu: 125m
+      dnsPolicy: Default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tmg-ksa-e-service-sms-service-cip
+  labels:
+    app: tmg-ksa-e-service-sms-app
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8025
+  selector:
+    app: tmg-ksa-e-service-sms-app
