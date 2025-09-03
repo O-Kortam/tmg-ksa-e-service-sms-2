@@ -1,0 +1,12 @@
+version: 1.0
+stages:
+  - stage: Build
+    displayName: "Build with Maven and JDK 17"
+    jobs:
+      - job: MavenBuild
+        steps:
+          - uses: compile/maven@v1.0
+            inputs:
+              jdkVersion: "17"
+              mavenVersion: "3.8"
+              goals: "clean package -Dmaven.test.skip=true"
